@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bi_export_config,bi.export.config,model_bi_export_config,base.group_user,1,1,1,1
+access_bi_dashboard_item,bi.dashboard.item,model_bi_dashboard_item,base.group_user,1,1,1,1

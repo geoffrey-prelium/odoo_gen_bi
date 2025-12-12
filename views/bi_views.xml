@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top-level Menu -->
+    <menuitem id="menu_odoo_gen_bi_root"
+              name="Generative BI"
+              web_icon="odoo_gen_bi,static/description/icon.png"
+              sequence="10"/>
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_odoo_gen_bi_config"
+              name="Configuration"
+              parent="menu_odoo_gen_bi_root"
+              sequence="100"/>
+
+    <!-- Settings View Inherit -->
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.odoo_gen_bi</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Generative BI" string="Generative BI" name="odoo_gen_bi">
+                    <block title="Google Cloud Configuration" name="gcp_config">
+                        <setting help="Upload your Google Cloud Service Account JSON key. This key must have permissions for BigQuery and Vertex AI.">
+                            <field name="bi_gcp_credentials_json"/>
+                            <div class="content-group">
+                                <div class="mt8">
+                                    <label for="bi_gcp_project_id" class="o_light_label"/>
+                                    <field name="bi_gcp_project_id"/>
+                                </div>
+                                <div class="mt8">
+                                    <label for="bi_bq_dataset_id" class="o_light_label"/>
+                                    <field name="bi_bq_dataset_id"/>
+                                </div>
+                                <div class="mt8">
+                                    <label for="bi_gcp_location" class="o_light_label"/>
+                                    <field name="bi_gcp_location"/>
+                                </div>
+                                <div class="mt8">
+                                    <label for="bi_ai_model_name" class="o_light_label"/>
+                                    <field name="bi_ai_model_name"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    
+                    <block title="Automated Synchronization" name="sync_config">
+                        <setting help="Automatically sync your specific Odoo models to BigQuery at regular intervals.">
+                            <field name="bi_auto_sync"/>
+                            <div class="content-group" invisible="not bi_auto_sync">
+                                <div class="mt16 row">
+                                    <label for="bi_sync_interval_number" class="col-lg-3 o_light_label" string="Run Every"/>
+                                    <field name="bi_sync_interval_number" class="oe_inline ms-2 me-2"/>
+                                    <field name="bi_sync_interval_type" class="oe_inline"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Settings Action -->
+    <record id="action_odoo_gen_bi_config_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module' : 'odoo_gen_bi'}</field>
+    </record>
+
+    <menuitem id="menu_odoo_gen_bi_settings"
+              name="Settings"
+              parent="menu_odoo_gen_bi_config"
+              action="action_odoo_gen_bi_config_settings"
+              sequence="10"/>
+    <!-- ETL Config Views -->
+    <record id="view_bi_export_config_form" model="ir.ui.view">
+        <field name="name">bi.export.config.form</field>
+        <field name="model">bi.export.config</field>
+        <field name="arch" type="xml">
+            <form string="Export Configuration">
+                <header>
+                    <button name="action_sync_to_bq" string="Sync Now" type="object" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Configuration Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="last_sync_date"/>
+                        <field name="model_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_bi_export_config_tree" model="ir.ui.view">
+        <field name="name">bi.export.config.list</field>
+        <field name="model">bi.export.config</field>
+        <field name="arch" type="xml">
+            <list string="Export Configurations">
+                <field name="name"/>
+                <field name="model_ids" widget="many2many_tags"/>
+                <field name="last_sync_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_bi_export_config" model="ir.actions.act_window">
+        <field name="name">Export Configuration</field>
+        <field name="res_model">bi.export.config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_bi_export_config"
+              name="Export Models"
+              parent="menu_odoo_gen_bi_config"
+              action="action_bi_export_config"
+              sequence="20"/>
+
+    <!-- Scheduled Action -->
+    <record id="ir_cron_bi_sync_daily" model="ir.cron">
+        <field name="name">Generative BI: Daily Sync to BigQuery</field>
+        <field name="model_id" ref="model_bi_export_config"/>
+        <field name="state">code</field>
+        <field name="code">model.search([]).action_sync_to_bq()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+    </record>
+    <!-- Client Action Dashboard -->
+    <record id="action_bi_dashboard" model="ir.actions.client">
+        <field name="name">AI Dashboard</field>
+        <field name="tag">odoo_gen_bi.dashboard</field>
+    </record>
+
+    <menuitem id="menu_bi_dashboard"
+              name="Dashboard"
+              parent="menu_odoo_gen_bi_root"
+              action="action_bi_dashboard"
+              sequence="1"/>
+</odoo>

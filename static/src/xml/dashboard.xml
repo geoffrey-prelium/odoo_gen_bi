@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="odoo_gen_bi.Dashboard">
+        <div class="o_bi_dashboard h-100 d-flex flex-column overflow-auto p-3">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-lg-10 offset-lg-1">
+                    <div class="card shadow-sm p-3">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">Question</label>
+                                <input type="text" class="form-control" placeholder="e.g. 'Show total sales'" t-model="state.prompt" t-on-keydown="onInputKeydown"/>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-muted small">Group By</label>
+                                <input type="text" class="form-control form-control-sm" placeholder="e.g. 'Month'" t-model="state.groupBy" t-on-keydown="onInputKeydown"/>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-muted small">Filter By</label>
+                                <input type="text" class="form-control form-control-sm" placeholder="e.g. '2024 only'" t-model="state.filterBy" t-on-keydown="onInputKeydown"/>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-muted small">Sort By</label>
+                                <input type="text" class="form-control form-control-sm" placeholder="e.g. 'Descending'" t-model="state.sortBy" t-on-keydown="onInputKeydown"/>
+                            </div>
+                            <div class="col-md-12 text-end mt-3">
+                                <button class="btn btn-primary px-4" type="button" t-on-click="onGenerate">
+                                    <i class="fa fa-magic me-2"/>Generate Chart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <t t-if="state.preview">
+                 <div class="row mb-4">
+                    <div class="col-lg-10 offset-lg-1">
+                        <div class="card shadow-sm border-primary">
+                            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2 flex-grow-1 me-3">
+                                    <h5 class="mb-0 text-nowrap">Preview:</h5>
+                                    <input type="text" class="form-control form-control-sm text-white bg-white bg-opacity-25 border-0" 
+                                           t-model="state.previewTitle" placeholder="Chart Title"/>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-light text-primary me-2" t-on-click="savePreview">
+                                        <i class="fa fa-save me-1"/>Save
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-light" t-on-click="discardPreview">
+                                        <i class="fa fa-times"/>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container" style="position: relative; height:40vh; width:100%">
+                                    <canvas t-ref="previewCanvas"/>
+                                </div>
+                                <div class="mt-2 text-muted small">
+                                    <strong>SQL:</strong> <t t-esc="state.preview.sql"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Saved Charts Grid -->
+            <div class="row">
+                <t t-foreach="state.charts" t-as="chart" t-key="chart.id">
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <ChartCard chart="chart" onDelete="(id) => this.onDeleteChart(id)" />
+                    </div>
+                </t>
+            </div>
+        </div>
+    </t>
+    
+    <t t-name="odoo_gen_bi.ChartCard">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 text-truncate" t-att-title="props.chart.name"><t t-esc="props.chart.name"/></h6>
+                <button class="btn btn-sm btn-link text-danger" t-on-click="() => this.deleteChart(props.chart.id)">
+                    <i class="fa fa-trash"/>
+                </button>
+            </div>
+            <div class="card-body">
+                 <div class="chart-container" style="position: relative; height: 300px;">
+                    <canvas t-ref="chartCanvas"/>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
