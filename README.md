@@ -67,6 +67,3 @@ Accédez au menu principal **Generative BI**.
 - `models/bi_ai.py` : Intégration avec Vertex AI pour la génération de SQL.
 - `static/src/` : Composants Javascript (OWL) pour le tableau de bord frontend.
 
-## Support
-
-Développé par Antigravity. Pour toute question ou problème, veuillez ouvrir une issue sur le dépôt GitHub.
