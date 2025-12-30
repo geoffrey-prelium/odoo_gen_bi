@@ -1,6 +1,9 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
+
+console.log("odoo_gen_bi dashboard module loaded"); // DEBUG: Validating file load on SH
+
 import { useService } from "@web/core/utils/hooks";
 import { Component, useState, onMounted, onWillUnmount, useRef } from "@odoo/owl";
 import { loadBundle } from "@web/core/assets";
@@ -193,3 +196,5 @@ BiDashboard.template = "odoo_gen_bi.Dashboard";
 BiDashboard.components = { ChartCard };
 
 registry.category("actions").add("odoo_gen_bi.dashboard", BiDashboard);
+console.log("odoo_gen_bi.dashboard registered in actions category"); // DEBUG
+
