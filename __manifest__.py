@@ -25,6 +25,7 @@
     'external_dependencies': {
         'python': ['google.cloud.bigquery', 'google.cloud.aiplatform'],
     },
+    'demo': [],
     'installable': True,
     'application': True,
     'license': 'LGPL-3',
